@@ -1,0 +1,138 @@
+Red Wine Quality por Juliano Mendieta
+========================================================
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Carregue aqui todos os pacotes utilizados 
+# na sua análise realizada neste arquivo fonte.
+
+# Note que o parâmetro "echo" foi definido como FALSE neste código.
+# Isso previne que o código apresente resultados formatados em HTML.
+# Você deve definir echo=FALSE para todos os blocos de código no seu arquivo.
+
+library(ggplot2)
+library(gridExtra)
+```
+
+```{r echo=FALSE, Load_the_Data}
+# Carregamento dos dados
+wQR <- read.csv("wineQualityReds.csv")
+wQR$X <- NULL
+```
+
+# Seção de Gráficos Univariados
+```{r echo=FALSE, Univariate_Plots}
+
+```
+
+# Análise Univariada
+
+```{r echo=FALSE, Univariate_Plots}
+# Examination of dataset variables
+names(wQR)
+summary(wQR)
+
+# Based on the dataset description the Quality variable should be a factor
+wQR$quality <- factor(wQR$quality, ordered = T)
+# Focused xxamination of the Quality variable
+names(wQR$quality)
+summary(wQR$quality)
+```
+
+```{r echo=FALSE, Univariate_Plots1}
+create_plot <- function(varname, binwidth = NULL, xlab = "") {
+  return(qplot(x=varname, data=wQR,
+               binwidth=binwidth, xlab=xlab, fill=I("red")))
+}
+
+
+
+grid.arrange(create_plot('fixed.acidity', 0.1,'fixed.acidity'),
+             create_plot('volatile.acidity', 0.01,'volatile.acidity'),
+             create_plot('citric.acid', 0.01,'citric.acid'),
+             create_plot('residual.sugar', 0.1,'residual.sugar'),
+             create_plot('chlorides', 0.001,'chlorides'),
+             create_plot('free.sulfur.dioxide', 1,'free.sulfur.dioxide'),
+             create_plot('total.sulfur.dioxide', 1,'total.sulfur.dioxide'),
+             create_plot('density', 0.0001,'density'),
+             create_plot('pH', 0.01,'pH'),
+             create_plot('sulphates', 0.01, 'sulphates'),
+             create_plot('alcohol', 0.1,'alcohol'),
+             create_plot('quality', 0.01,'quality'),
+             #qplot(wQR$quality, fill=I("red"), xlab='quality'),
+             ncol = 4)
+```
+
+### Qual é a estrutura do conjunto de dados?
+
+### Quais são os principais atributos de interesse deste conjunto de dados?
+
+### Quais outros atributos você acha que podem lhe auxiliar na investigação destes atributos de interesse?
+
+### Você criou novas variáveis a partir dos atributos existentes no conjunto de dados?
+
+### Dos atributos investigados, distribuições incomuns foram encontradas? Você aplicou operações nos dados para limpá-los, ajustá-los ou mudar a forma dos dados? Se sim, por quê?
+
+
+
+# Seção de Gráficos Bivariados
+```{r echo=FALSE, Bivariate_Plots}
+
+```
+
+# Análise Bivariada
+
+### Discuta sobre alguns dos relacionamentos observados nesta parte da investigação. Como os atributos de interesse variaram no conjunto de dados?
+
+### Você observou algum relacionamento interessante entre os outros atributos (os que não são de interesse)?
+
+### Qual foi o relacionamento mais forte encontrado?
+
+
+
+
+# Seção de Gráficos Multivariados
+
+```{r echo=FALSE, Multivariate_Plots}
+
+```
+
+# Análise Multivariada
+
+### Discuta sobre os relacionamentos observados nesta parte da investigação. Quais atributos que fortaleceram os demais na observação das variáveis de interesse?
+
+### Interações surpreendentes e/ou interessantes foram encontradas entre os atributos?
+
+### OPCIONAL: Modelos foram criados usando este conjunto de dados? Discuta sobre os pontos fortes e as limitações do seu modelo.
+
+------
+
+# Gráficos Finais e Sumário
+
+### Primeiro Gráfico
+```{r echo=FALSE, Plot_One}
+
+```
+
+### Descrição do Primeiro Gráfico
+
+
+### Segundo Gráfico
+```{r echo=FALSE, Plot_Two}
+
+```
+
+### Descrição do Segundo Gráfico
+
+
+### Terceiro Gráfico
+```{r echo=FALSE, Plot_Three}
+
+```
+
+### Descrição do Terceiro Gráfico
+
+------
+
+# Reflexão
+
+
