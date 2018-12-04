@@ -11,6 +11,8 @@ Red Wine Quality por Juliano Mendieta
 
 library(ggplot2)
 library(gridExtra)
+library(reshape2)
+library(PerformanceAnalytics)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -26,40 +28,78 @@ wQR$X <- NULL
 
 # Análise Univariada
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE}
 # Examination of dataset variables
 names(wQR)
 summary(wQR)
-
-# Based on the dataset description the Quality variable should be a factor
-wQR$quality <- factor(wQR$quality, ordered = T)
-# Focused xxamination of the Quality variable
-names(wQR$quality)
-summary(wQR$quality)
 ```
 
-```{r echo=FALSE, Univariate_Plots1}
-create_plot <- function(varname, binwidth = NULL, xlab = "") {
-  return(qplot(x=varname, data=wQR,
-               binwidth=binwidth, xlab=xlab, fill=I("red")))
-}
 
+```{r echo=FALSE}
+grid.arrange(
+    qplot(x=fixed.acidity, data=wQR, binwidth=0.5, fill=I('#993366'), xlab='fixed.acidity'),
+    qplot(x=volatile.acidity, data=wQR, binwidth=0.05, fill=I('#993366'), xlab='volatile.acidity'),
+    qplot(x=citric.acid, data=wQR, binwidth=0.05, fill=I('#993366'), xlab='citric.acid'),
+    qplot(x=residual.sugar, data=wQR, binwidth=0.4, fill=I('#993366'), xlab='residual.sugar'),
+    qplot(x=chlorides, data=wQR, binwidth=0.025, fill=I('#993366'), xlab='chlorides'),
+    qplot(x=free.sulfur.dioxide, data=wQR, binwidth=4, fill=I('#993366'), xlab='free.sulfur.dioxide'),
+    qplot(x=total.sulfur.dioxide, data=wQR, binwidth=20, fill=I('#993366'), xlab='total.sulfur.dioxide'),
+    qplot(x=density, data=wQR, binwidth=0.001, fill=I('#993366'), xlab='density'),
+    qplot(x=pH, data=wQR, binwidth=0.05, fill=I('#993366'), xlab='pH'),
+    qplot(x=sulphates, data=wQR, binwidth=0.1, fill=I('#993366'), xlab='sulphates'),
+    qplot(x=alcohol, data=wQR, binwidth=0.25, fill=I('#993366'), xlab='alcohol'),
+    ncol = 3)
+```
 
+```{r echo=FALSE}
+grid.arrange(
+    qplot(x=log10(fixed.acidity), data=wQR, fill=I('#993366'), xlab='fixed.acidity'),
+    qplot(x=log10(volatile.acidity), data=wQR, fill=I('#993366'), xlab='volatile.acidity'),
+    qplot(x=log10(citric.acid), data=wQR, fill=I('#993366'), xlab='citric.acid'),
+    qplot(x=log10(residual.sugar), data=wQR, fill=I('#993366'), xlab='residual.sugar'),
+    qplot(x=log10(chlorides), data=wQR, fill=I('#993366'), xlab='chlorides'),
+    qplot(x=log10(free.sulfur.dioxide), data=wQR, fill=I('#993366'), xlab='free.sulfur.dioxide'),
+    qplot(x=log10(total.sulfur.dioxide), data=wQR, fill=I('#993366'), xlab='total.sulfur.dioxide'),
+    qplot(x=log10(density), data=wQR, fill=I('#993366'), xlab='density'),
+    qplot(x=log10(pH), data=wQR, fill=I('#993366'), xlab='pH'),
+    qplot(x=log10(sulphates), data=wQR, fill=I('#993366'), xlab='sulphates'),
+    qplot(x=log10(alcohol), data=wQR, fill=I('#993366'), xlab='alcohol'),
+    ncol = 3)
+```
 
-grid.arrange(create_plot('fixed.acidity', 0.1,'fixed.acidity'),
-             create_plot('volatile.acidity', 0.01,'volatile.acidity'),
-             create_plot('citric.acid', 0.01,'citric.acid'),
-             create_plot('residual.sugar', 0.1,'residual.sugar'),
-             create_plot('chlorides', 0.001,'chlorides'),
-             create_plot('free.sulfur.dioxide', 1,'free.sulfur.dioxide'),
-             create_plot('total.sulfur.dioxide', 1,'total.sulfur.dioxide'),
-             create_plot('density', 0.0001,'density'),
-             create_plot('pH', 0.01,'pH'),
-             create_plot('sulphates', 0.01, 'sulphates'),
-             create_plot('alcohol', 0.1,'alcohol'),
-             create_plot('quality', 0.01,'quality'),
-             #qplot(wQR$quality, fill=I("red"), xlab='quality'),
-             ncol = 4)
+```{r echo=FALSE}
+grid.arrange(
+    qplot(x=sqrt(fixed.acidity), data=wQR, fill=I('#993366'), xlab='fixed.acidity'),
+    qplot(x=sqrt(volatile.acidity), data=wQR, fill=I('#993366'), xlab='volatile.acidity'),
+    qplot(x=sqrt(citric.acid), data=wQR, fill=I('#993366'), xlab='citric.acid'),
+    qplot(x=sqrt(residual.sugar), data=wQR, fill=I('#993366'), xlab='residual.sugar'),
+    qplot(x=sqrt(chlorides), data=wQR, fill=I('#993366'), xlab='chlorides'),
+    qplot(x=sqrt(free.sulfur.dioxide), data=wQR, fill=I('#993366'), xlab='free.sulfur.dioxide'),
+    qplot(x=sqrt(total.sulfur.dioxide), data=wQR, fill=I('#993366'), xlab='total.sulfur.dioxide'),
+    qplot(x=sqrt(density), data=wQR, fill=I('#993366'), xlab='density'),
+    qplot(x=sqrt(pH), data=wQR, fill=I('#993366'), xlab='pH'),
+    qplot(x=sqrt(sulphates), data=wQR, fill=I('#993366'), xlab='sulphates'),
+    qplot(x=sqrt(alcohol), data=wQR, fill=I('#993366'), xlab='alcohol'),
+    ncol = 3)
+```
+
+```{r echo=FALSE}
+ggplot(aes(x = quality), data = wQR)+
+stat_count(colour="black", fill="#993366", width=.35)+
+xlab("Nota do vinho") + ylab("Count") +
+ggtitle("Distribuição da Qualidade do Vinho")
+```
+
+```{r echo=FALSE}
+wQR$quality.level <- NA
+wQR$quality.level <- ifelse(wQR$quality < 5, 'baixa',
+                  ifelse(wQR$quality < 7, 'média', 'alta'))
+wQR$quality.level <- factor(wQR$quality.level, levels = c('baixa', 'média', 'alta'))
+
+ggplot(aes(x = quality.level), data = wQR)+
+stat_count(colour="black", fill="#993366", width=0.5)+
+xlab("Nível de qualidade do vinho") + ylab("Count") +
+ggtitle("Distribuição da Qualidade do Vinho (por grupo)")
 ```
 
 ### Qual é a estrutura do conjunto de dados?
@@ -79,6 +119,77 @@ grid.arrange(create_plot('fixed.acidity', 0.1,'fixed.acidity'),
 
 ```
 
+```{r echo=FALSE, fig.width = 10}
+# Get lower triangle of the correlation matrix
+  get_lower_tri<-function(cormat){
+    cormat[upper.tri(cormat)] <- NA
+    return(cormat)
+  }
+  # Get upper triangle of the correlation matrix
+  get_upper_tri <- function(cormat){
+    cormat[lower.tri(cormat)]<- NA
+    return(cormat)
+  }
+  
+reorder_cormat <- function(cormat){
+# Use correlation between variables as distance
+dd <- as.dist((1-cormat)/2)
+hc <- hclust(dd)
+cormat <-cormat[hc$order, hc$order]
+}
+
+data = wQR[, c(1:12)]
+
+cormat <- round(cor(data),2)
+# Reorder the correlation matrix
+cormat <- reorder_cormat(cormat)
+upper_tri <- get_upper_tri(cormat)
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Create a ggheatmap
+ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
+ geom_tile(color = "white")+
+ scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+    name="Pearson\nCorrelation") +
+  theme_minimal()+ # minimal theme
+ theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 12, hjust = 1))+
+ coord_fixed()
+
+ggheatmap + 
+geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
+theme(
+  axis.title.x = element_blank(),
+  axis.title.y = element_blank(),
+  panel.grid.major = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.ticks = element_blank(),
+  legend.justification = c(1, 0),
+  legend.position = c(0.6, 0.7),
+  legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+                title.position = "top", title.hjust = 0.5))
+```
+
+
+```{r echo=FALSE, fig.width=8.5}
+chart.Correlation(wQR[, c(1, 2, 10, 11, 12)], histogram=TRUE, pch=19)
+```
+
+```{r echo=FALSE, fig.width=8.5}
+grid.arrange(
+  qplot(quality.level, volatile.acidity, data=wQR, geom=c("boxplot"), fill=quality.level),
+  qplot(quality.level, volatile.acidity, data=wQR, geom="violin", fill=quality.level),
+  qplot(quality.level, sulphates, data=wQR, geom="boxplot", fill=quality.level),
+  qplot(quality.level, sulphates, data=wQR, geom="violin", fill=quality.level),
+  qplot(quality.level, alcohol, data=wQR, geom="boxplot", fill=quality.level),
+  qplot(quality.level, alcohol, data=wQR, geom="violin", fill=quality.level),
+  ncol=2
+  )
+```
+
 # Análise Bivariada
 
 ### Discuta sobre alguns dos relacionamentos observados nesta parte da investigação. Como os atributos de interesse variaram no conjunto de dados?
@@ -92,7 +203,24 @@ grid.arrange(create_plot('fixed.acidity', 0.1,'fixed.acidity'),
 
 # Seção de Gráficos Multivariados
 
-```{r echo=FALSE, Multivariate_Plots}
+```{r echo=FALSE, Multivariate_Plots, fig.width=8.5}
+
+p1 <- ggplot(data=wQR, aes(x=quality.level, y=log10(sulphates), col=alcohol)) + geom_jitter()
+p2 <- ggplot(data = wQR, aes(x = alcohol, y = log10(sulphates))) +
+          geom_point(aes(color = quality.level), stat = 'summary', fun.y = median) +
+          geom_smooth(method = "lm", se = TRUE, size = 1) +
+          guides(colour = guide_legend(reverse=T))
+p3 <- ggplot(data=wQR, aes(x=quality.level, y=volatile.acidity, col=alcohol)) + geom_jitter()
+p4 <- ggplot(data = wQR, aes(x = alcohol, y = volatile.acidity)) +
+          geom_point(aes(color = quality.level), stat = 'summary', fun.y = median) +
+          geom_smooth(method = "lm", se = TRUE, size = 1) +
+          guides(colour = guide_legend(reverse=T))
+
+grid.arrange(p1,p2,p3,p4)
+```
+
+```{r echo=FALSE}
+ggplot(data=wQR, aes(x=quality.level, y=log10(sulphates), col=alcohol, size=volatile.acidity)) + geom_jitter()
 
 ```
 
