@@ -15,27 +15,49 @@ library(reshape2)
 library(PerformanceAnalytics)
 ```
 
+# Dataset
+
+Este conjunto de dados contém 1.599 vinhos tintos com 11 variáveis de propriedades químicas do vinho. Ao menos 3 especialistas em vinhos avaliaram cada vinho, fornecendo uma nota entre 0 (muito ruim) e 10 (muito excelente).
+
+Red Wine Quality é um dataset relacionado a variates do vinho Português "Vinho Verde". Por questões de privacidade somente os dados de propriedades químicas e e as avaliações dos especialistas estão disponíveis.
+
+### Informação dos atributos:
+
+1. **fixed acidity** -> acidez fixa (ácido tartárico - g / dm^3)
+2. **volatile acidity** -> acidez volátil (ácido acético - g / dm^3)
+3. **citric acid** -> acido cítrico (g / dm^3)
+4. **açucar residual** -> residual sugar (g / dm^3)
+5. **chlorides** -> cloretos (cloreto de sódio - g / dm^3)
+6. **free sulfur dioxide** -> dióxido de enxofre livre (mg / dm^3)
+7. **total sulfur dioxide** -> dióxido de enxofre total (mg / dm^3)
+8. **density** -> densidade (g / cm^3)
+9. **pH**
+10. **sulphates** -> sulfatos (sulfato de potássio - g / dm3)
+11. **alcohol** -> álcool (% por volume)
+12. **quality** -> qualidade (nota entre 0 e 10)
+  
+
+**Questão principal**: *Quais propriedades químicas influenciam a qualidade dos vinhos tintos?*
 ```{r echo=FALSE, Load_the_Data}
 # Carregamento dos dados
 wQR <- read.csv("wineQualityReds.csv")
 wQR$X <- NULL
-```
 
-# Seção de Gráficos Univariados
-```{r echo=FALSE, Univariate_Plots}
-
-```
-
-# Análise Univariada
-
-```{r echo=FALSE}
-# Examination of dataset variables
+# Avaliação das váriáveis do dataset
 names(wQR)
 summary(wQR)
 ```
 
+Alguns pontos interessantes até agora:
 
-```{r echo=FALSE}
+* Valores de qualidade não possuem entradas entre de 0 a 3 e de 9 a 10!
+* Temos uma média e mediana relativamente distantes em *total.sulfur.dioxide*!
+
+# Seção de Gráficos Univariados
+
+## Distribuição das Propriedades Químicas
+```{r echo=FALSE, Univariate_Plots_Histogram}
+# Criação de um grid contendo histogramas para todas as propriedades químicas do dataset
 grid.arrange(
     qplot(x=fixed.acidity, data=wQR, binwidth=0.5, fill=I('#993366'), xlab='fixed.acidity'),
     qplot(x=volatile.acidity, data=wQR, binwidth=0.05, fill=I('#993366'), xlab='volatile.acidity'),
@@ -51,23 +73,37 @@ grid.arrange(
     ncol = 3)
 ```
 
-```{r echo=FALSE}
+Primeiramente esse gráfico busca entender como estão distribuidas cada propriedade química desse dataset e gerar insights de como transformar os dados para um melhor resultado.
+
+Observações:
+
+* *volatile.acidity, density and PH* possuem uma distribuição **normal**.
+* *fixed.acidity, citric.acid, free.sulfur.dioxide, total.sulfur.dioxide, sulphates, alcohol* possuem uma distribuição de **assimetria positiva**.
+* *residual.sugar, chlorides* possuem uma distribuição de **cauda longa**.
+
+## Distribuição das Propriedades Químicas (Log10)
+```{r echo=FALSE, warning=FALSE, Univariate_Plots_Log10_Histogram}
+# Criação de um grid contendo histogramas para todas as propriedades químicas do dataset após transformação logarítmica
 grid.arrange(
-    qplot(x=log10(fixed.acidity), data=wQR, fill=I('#993366'), xlab='fixed.acidity'),
-    qplot(x=log10(volatile.acidity), data=wQR, fill=I('#993366'), xlab='volatile.acidity'),
-    qplot(x=log10(citric.acid), data=wQR, fill=I('#993366'), xlab='citric.acid'),
-    qplot(x=log10(residual.sugar), data=wQR, fill=I('#993366'), xlab='residual.sugar'),
-    qplot(x=log10(chlorides), data=wQR, fill=I('#993366'), xlab='chlorides'),
-    qplot(x=log10(free.sulfur.dioxide), data=wQR, fill=I('#993366'), xlab='free.sulfur.dioxide'),
-    qplot(x=log10(total.sulfur.dioxide), data=wQR, fill=I('#993366'), xlab='total.sulfur.dioxide'),
-    qplot(x=log10(density), data=wQR, fill=I('#993366'), xlab='density'),
-    qplot(x=log10(pH), data=wQR, fill=I('#993366'), xlab='pH'),
-    qplot(x=log10(sulphates), data=wQR, fill=I('#993366'), xlab='sulphates'),
-    qplot(x=log10(alcohol), data=wQR, fill=I('#993366'), xlab='alcohol'),
+    qplot(x=log10(fixed.acidity), data=wQR, binwidth=0.01, fill=I('#993366'), xlab='fixed.acidity'),
+    qplot(x=log10(volatile.acidity), data=wQR, binwidth=0.05, fill=I('#993366'), xlab='volatile.acidity'),
+    qplot(x=log10(citric.acid), data=wQR, binwidth=0.025, fill=I('#993366'), xlab='citric.acid'),
+    qplot(x=log10(residual.sugar), data=wQR, binwidth=0.05, fill=I('#993366'), xlab='residual.sugar'),
+    qplot(x=log10(chlorides), data=wQR, binwidth=0.025, fill=I('#993366'), xlab='chlorides'),
+    qplot(x=log10(free.sulfur.dioxide), data=wQR, binwidth=0.05, fill=I('#993366'), xlab='free.sulfur.dioxide'),
+    qplot(x=log10(total.sulfur.dioxide), data=wQR, binwidth=0.1, fill=I('#993366'), xlab='total.sulfur.dioxide'),
+    qplot(x=log10(density), data=wQR, binwidth=0.0001, fill=I('#993366'), xlab='density'),
+    qplot(x=log10(pH), data=wQR, binwidth=0.005, fill=I('#993366'), xlab='pH'),
+    qplot(x=log10(sulphates), data=wQR, binwidth=0.025, fill=I('#993366'), xlab='sulphates'),
+    qplot(x=log10(alcohol), data=wQR, binwidth=0.01, fill=I('#993366'), xlab='alcohol'),
     ncol = 3)
 ```
 
-```{r echo=FALSE}
+Da mesma maneira, esse gráfico nos mostra a distribuição dos dados após a transformação logarítmica, que busca reduzir o efeito de distribuições enviezadas. Podemos ver que o *sulphates* já se encontra melhor distribuído.
+
+## Distribuição das Propriedades Químicas (Sqrt)
+```{r echo=FALSE, message=FALSE, Univariate_Plots_Sqrt_Histogram}
+# Criação de um grid contendo histogramas para todas as propriedades químicas do dataset após transformação por raíz quadrada
 grid.arrange(
     qplot(x=sqrt(fixed.acidity), data=wQR, fill=I('#993366'), xlab='fixed.acidity'),
     qplot(x=sqrt(volatile.acidity), data=wQR, fill=I('#993366'), xlab='volatile.acidity'),
@@ -83,80 +119,126 @@ grid.arrange(
     ncol = 3)
 ```
 
-```{r echo=FALSE}
-ggplot(aes(x = quality), data = wQR)+
-stat_count(colour="black", fill="#993366", width=.35)+
-xlab("Nota do vinho") + ylab("Count") +
-ggtitle("Distribuição da Qualidade do Vinho")
+O gráfico aqui nos mostra o resultado da transformação por raíz quadrada, que tem o mesmo objetivo da logarítmica. Foi feita para avaliar se a distribuição ficaria mais normalizada com a mesma.
+
+## Distribuição da Qualidade do Vinho
+```{r echo=FALSE, Univariate_Plots_Quality_Histogram}
+# Cria um histograma com a distribuição de notas para a qualidade do vinho
+ggplot(aes(x = quality), data = wQR) +
+  stat_count(colour="black", fill="#993366", width=.35) +
+  xlab("Nota do vinho") + ylab("Count") +
+  ggtitle("Distribuição da Qualidade do Vinho")
 ```
 
-```{r echo=FALSE}
+Conforme vimos anteriormente, não existem valores de 0 a 3 e de 8 a 10. 
+Com esse gráfico podemos ver uma grande concentração dos dados para vinhos com notas 5 e 6.
+Podemos dividir as notas de qualidade em 3 níveis para auxiliar em próximas visualizações: baixa (3-4), média (5-6) e alta (7-8).
+
+## Análise da Qualidade do Vinho por Níveis de Qualidade
+```{r echo=FALSE, Univariate_Plots_Quality_Level_Histogram}
+# Cria uma nova coluna
 wQR$quality.level <- NA
+# Para cada valor de qualidade, atribui um nível [baixa (3-4), média (5-6), alta (7-8)].
 wQR$quality.level <- ifelse(wQR$quality < 5, 'baixa',
-                  ifelse(wQR$quality < 7, 'média', 'alta'))
+                     ifelse(wQR$quality < 7, 'média', 'alta'))
+# Define o nível de qualidade como factor
 wQR$quality.level <- factor(wQR$quality.level, levels = c('baixa', 'média', 'alta'))
 
+# Cria um novo histograma de distribuição para qualidade, agora usando o nível de qualidade.
 ggplot(aes(x = quality.level), data = wQR)+
 stat_count(colour="black", fill="#993366", width=0.5)+
 xlab("Nível de qualidade do vinho") + ylab("Count") +
-ggtitle("Distribuição da Qualidade do Vinho (por grupo)")
+ggtitle("Distribuição da Qualidade do Vinho (por nível)")
 ```
 
+Com nova variável torna-se ainda mais clara o desbalanceamento do dataset, que concentra a maior parte de seus exemplos em vinhos de qualidade média.
+
+# Análise Univariada
+
 ### Qual é a estrutura do conjunto de dados?
+Um dataframe com 1599 observações e 13 variáveis. Sendo dessas:
+
+* 11 propriedades químicas do vinho.
+* 1 nota de qualidade (0, 10) do vinho segundo especialistas.
+* 1 nível de qualidade (baixa, média, alta) do vinho. Variável adicionada ao dataframe a partir do agrupamento nota de qualidade.
+
+Outras observações:
+
+* A maior parte dos dados do dataset possuem qualidade com valor de 5 e 6.
 
 ### Quais são os principais atributos de interesse deste conjunto de dados?
 
+O principal atributo de interesse nesse conjunto de dados é a nota de qualidade. Queremos analisar a tendência das notas de qualidade com base dos componentes químicos.
+
 ### Quais outros atributos você acha que podem lhe auxiliar na investigação destes atributos de interesse?
+
+Com a pouca experiência que tenho com a arte de degustação de vinhos, acredito que os atributos que mais podem impactar a qualidade do mesmo são a quantidade de álcool
+e o quão ácido o vinho é. São os principais atributos que levo em consideração na hora de avaliar um vinho.
 
 ### Você criou novas variáveis a partir dos atributos existentes no conjunto de dados?
 
+Sim, foi criada a variável *quality.level*. Essa variável corresponde a um agrupamento da variável qualidade por "níveis de qualidade", conforme tabela abaixo.
+
+| Nível de qualidade | Notas |
+| :----------------: |:-----:|
+| Baixa              | 3, 4  |
+| Média              | 5, 6  |
+| Alta               | 7, 8  |
+
+Essa variável foi criada pensando em uma melhor análise visual e se aproveita do fato de grande parte dos dados estarem concentrados nos valores de qualidade 5 e 6.
+
 ### Dos atributos investigados, distribuições incomuns foram encontradas? Você aplicou operações nos dados para limpá-los, ajustá-los ou mudar a forma dos dados? Se sim, por quê?
 
+Distribuições incomuns foram encontradas:
+
+* *fixed.acidity, citric.acid, free.sulfur.dioxide, total.sulfur.dioxide, sulphates, alcohol* possuem uma distribuição de **assimetria positiva**.
+* *residual.sugar, chlorides* possuem uma distribuição de **cauda longa**.
+
+Apliquei transformações logarítmicas e de raiz quadrada para ver se, após isso, as distribuições encontravam-se mais normalizadas. Desse modo, se precisar utilizar alguma dessas
+variáveis poderei usar essa variável transformada para obter resultados que tragam mais valor real para a análise.
 
 
 # Seção de Gráficos Bivariados
-```{r echo=FALSE, Bivariate_Plots}
 
-```
+## Matriz de Correlação de Pearson
+```{r echo=FALSE, fig.height=6, fig.width=10, Bivariate_Plots_Cor_Heatmap}
 
-```{r echo=FALSE, fig.width = 10}
-# Get lower triangle of the correlation matrix
-  get_lower_tri<-function(cormat){
-    cormat[upper.tri(cormat)] <- NA
-    return(cormat)
-  }
-  # Get upper triangle of the correlation matrix
-  get_upper_tri <- function(cormat){
-    cormat[lower.tri(cormat)]<- NA
-    return(cormat)
-  }
-  
-reorder_cormat <- function(cormat){
-# Use correlation between variables as distance
-dd <- as.dist((1-cormat)/2)
-hc <- hclust(dd)
-cormat <-cormat[hc$order, hc$order]
+# Retorna o triângulo superior da matriz de correlação.
+get_upper_tri <- function(cormat){
+  cormat[lower.tri(cormat)]<- NA
+  return(cormat)
 }
 
+# Reordena a matriz usando a correlação entre as variáveis como distância
+reorder_cormat <- function(cormat){
+  dd <- as.dist((1-cormat)/2)
+  hc <- hclust(dd)
+  cormat <-cormat[hc$order, hc$order]
+}
+
+# Pega apenas os atributos iniciais
 data = wQR[, c(1:12)]
 
+# Cria a matriz de correlação
 cormat <- round(cor(data),2)
-# Reorder the correlation matrix
+# Reordena a matriz de correlação
 cormat <- reorder_cormat(cormat)
+# Pega o triângulo superior da matriz de correlação
 upper_tri <- get_upper_tri(cormat)
-# Melt the correlation matrix
+# "funde" a matriz de correlação
 melted_cormat <- melt(upper_tri, na.rm = TRUE)
-# Create a ggheatmap
-ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
- geom_tile(color = "white")+
- scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-   midpoint = 0, limit = c(-1,1), space = "Lab", 
-    name="Pearson\nCorrelation") +
-  theme_minimal()+ # minimal theme
- theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-    size = 12, hjust = 1))+
+# Cria um heatmap com a matriz fundida
+ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                      midpoint = 0, limit = c(-1,1), space = "Lab", 
+                      name="Correlação\nde Pearson") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+        size = 12, hjust = 1)) +
  coord_fixed()
 
+# Adiciona os valores no heatmap
 ggheatmap + 
 geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
 theme(
@@ -168,69 +250,104 @@ theme(
   axis.ticks = element_blank(),
   legend.justification = c(1, 0),
   legend.position = c(0.6, 0.7),
-  legend.direction = "horizontal")+
+  legend.direction = "horizontal") +
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
-                title.position = "top", title.hjust = 0.5))
+         title.position = "top", title.hjust = 0.5))
 ```
 
+A correlação de Pearson nos permite algumas inferências:
 
-```{r echo=FALSE, fig.width=8.5}
-chart.Correlation(wQR[, c(1, 2, 10, 11, 12)], histogram=TRUE, pch=19)
+* A qualidade do vinho está negativamente correlacionada com a variável *volatile.acidity* em um valor considerável (-0.39). O que nos leva a inferir que quando a mesma cresce, a qualidade do vinho tende a descer.
+* A qualidade do vinho está positivamente correlacionada com a variável *alcohol* em um valor considerável (0.48). O que nos leva a inferir que quando a porcentagem de álcool aumenta, a qualidade do vinho tende a crescer.
+* A qualidade do vinho está positivamente correlacionada com as variáveis *sulphates* e *citric.acid* com 0.25 e 0.23 respectivamente. Essas duas variáveis nos fazem inferir que quantidades maiores da mesma tendem a levar a qualidade do vinho a valores maiores, mesmo que com uma importância menor do que *alcohol* e *volatile.acidity*.
+
+
+## Análise de Correlação - Variáveis Principais
+```{r echo=FALSE, Bivariate_Plots_Corr_PCA, fig.width=8.5}
+# Cria uma análise da distribuição e correlação entre as variáveis com maior correlação com qualidade.
+chart.Correlation(wQR[, c(2, 3, 10, 11, 12)], histogram=TRUE, pch=19)
 ```
 
-```{r echo=FALSE, fig.width=8.5}
+Após avaliar que as variáveis *volatile.acidity*, *citric.acid*, *sulphates* e *alcohol* são as que possuem maior correlação com a qualidade, foi feita uma nova
+análise de correlação levando em conta somente essas variáveis, para um olhar mais focado e refinado em suas distribuições e correlações.
+
+Com essa nova análise podemos ver que as variáveis *volatile.acidity* e *citric.acid* possuem forte correlação negativa.
+Como *volatile.acidity* possui a maior correlação com qualidade, manterei somente ela para as próximas análises.
+
+## Importância Relativa das Variáveis na Qualidade
+```{r echo=FALSE, Bivariate_Plots_PCA_Quality, fig.width=8.5}
+# Cria um gráfico de boxplot e violin para cada uma das variáveis com maior correlação com qualidade
 grid.arrange(
   qplot(quality.level, volatile.acidity, data=wQR, geom=c("boxplot"), fill=quality.level),
   qplot(quality.level, volatile.acidity, data=wQR, geom="violin", fill=quality.level),
-  qplot(quality.level, sulphates, data=wQR, geom="boxplot", fill=quality.level),
-  qplot(quality.level, sulphates, data=wQR, geom="violin", fill=quality.level),
+  qplot(quality.level, log10(sulphates), data=wQR, geom="boxplot", fill=quality.level),
+  qplot(quality.level, log10(sulphates), data=wQR, geom="violin", fill=quality.level),
   qplot(quality.level, alcohol, data=wQR, geom="boxplot", fill=quality.level),
   qplot(quality.level, alcohol, data=wQR, geom="violin", fill=quality.level),
   ncol=2
   )
 ```
 
+Os gráficos de violino e boxplot reforçam e demonstram as descobertas feitas nas análises anteriores:
+
+Vinhos com notas mais altas possuem valores mais baixos de *volatile.acidity* e valores mais altos de *sulphates* e *alcohol*.
+
+
 # Análise Bivariada
 
 ### Discuta sobre alguns dos relacionamentos observados nesta parte da investigação. Como os atributos de interesse variaram no conjunto de dados?
 
+* A qualidade do vinho está negativamente correlacionada com a variável *volatile.acidity* em um valor considerável (-0.39). O que nos leva a inferir que quando a mesma cresce, a qualidade do vinho tende a descer.
+* A qualidade do vinho está positivamente correlacionada com a variável *alcohol* em um valor considerável (0.48). O que nos leva a inferir que quando a porcentagem de álcool aumenta, a qualidade do vinho tende a crescer.
+* A qualidade do vinho está positivamente correlacionada com as variáveis *sulphates* e *citric.acid* com 0.25 e 0.23 respectivamente. Essas duas variáveis nos fazem inferir que quantidades maiores da mesma tendem a levar a qualidade do vinho a valores maiores, mesmo que com uma importância menor do que *alcohol* e *volatile.acidity*.
+
 ### Você observou algum relacionamento interessante entre os outros atributos (os que não são de interesse)?
+
+Outros relacionamentos interessantes são:
+
+* As variáveis *volatile.acidity* e *citric.acid* possuem forte correlação negativa.
+* As variáveis *pH* e *citric.acid*/*fixed.acidity* possuem forte correlação negativa. Isso se deve ao fato de que ácidos possuem menores valores de pH.
+* As variáveis *density* e *fixed.acidity* possuem forte correlação positiva. Vinhos que possuem uma acidez fixa são mais densos e mais difíceis de evaporar.
 
 ### Qual foi o relacionamento mais forte encontrado?
 
-
+O relacionamento com qualidade mais forte encontrado foi a porcentagem de álcool do vinho, que com valores mais elevados tende a ter uma maior nota.
 
 
 # Seção de Gráficos Multivariados
 
-```{r echo=FALSE, Multivariate_Plots, fig.width=8.5}
+```{r echo=FALSE, Multivariate_Plots_Log10_Sulphate_Alcohol, fig.width=8.5}
 
 p1 <- ggplot(data=wQR, aes(x=quality.level, y=log10(sulphates), col=alcohol)) + geom_jitter()
 p2 <- ggplot(data = wQR, aes(x = alcohol, y = log10(sulphates))) +
           geom_point(aes(color = quality.level), stat = 'summary', fun.y = median) +
           geom_smooth(method = "lm", se = TRUE, size = 1) +
           guides(colour = guide_legend(reverse=T))
+
+grid.arrange(p1,p2)
+```
+
+```{r echo=FALSE, Multivariate_Plots_Acidity_Alcohol, fig.width=8.5}
 p3 <- ggplot(data=wQR, aes(x=quality.level, y=volatile.acidity, col=alcohol)) + geom_jitter()
 p4 <- ggplot(data = wQR, aes(x = alcohol, y = volatile.acidity)) +
           geom_point(aes(color = quality.level), stat = 'summary', fun.y = median) +
           geom_smooth(method = "lm", se = TRUE, size = 1) +
           guides(colour = guide_legend(reverse=T))
 
-grid.arrange(p1,p2,p3,p4)
+grid.arrange(p3,p4)
 ```
 
-```{r echo=FALSE}
-ggplot(data=wQR, aes(x=quality.level, y=log10(sulphates), col=alcohol, size=volatile.acidity)) + geom_jitter()
 
+```{r echo=FALSE, Multivariate_Plots_PC_Influence}
+ggplot(data=wQR, aes(x=quality.level, y=log10(sulphates),
+                     col=alcohol, size=volatile.acidity)) + geom_jitter()
 ```
 
 # Análise Multivariada
 
 ### Discuta sobre os relacionamentos observados nesta parte da investigação. Quais atributos que fortaleceram os demais na observação das variáveis de interesse?
 
-### Interações surpreendentes e/ou interessantes foram encontradas entre os atributos?
-
-### OPCIONAL: Modelos foram criados usando este conjunto de dados? Discuta sobre os pontos fortes e as limitações do seu modelo.
+### Interações surpreendentes e/ou interessantes foram encontradas entre os atributos? 
 
 ------
 
