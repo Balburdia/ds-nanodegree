@@ -23,16 +23,16 @@ Red Wine Quality é um dataset relacionado a variates do vinho Português "Vinho
 
 ### Informação dos atributos:
 
-1. **fixed acidity** -> acidez fixa (ácido tartárico - g / dm^3)
-2. **volatile acidity** -> acidez volátil (ácido acético - g / dm^3)
-3. **citric acid** -> acido cítrico (g / dm^3)
-4. **açucar residual** -> residual sugar (g / dm^3)
-5. **chlorides** -> cloretos (cloreto de sódio - g / dm^3)
-6. **free sulfur dioxide** -> dióxido de enxofre livre (mg / dm^3)
-7. **total sulfur dioxide** -> dióxido de enxofre total (mg / dm^3)
-8. **density** -> densidade (g / cm^3)
+1. **fixed acidity** -> acidez fixa (ácido tartárico - g/dm³)
+2. **volatile acidity** -> acidez volátil (ácido acético - g/dm³)
+3. **citric acid** -> acido cítrico (g/dm³)
+4. **açucar residual** -> residual sugar (g/dm³)
+5. **chlorides** -> cloretos (cloreto de sódio - g/dm³)
+6. **free sulfur dioxide** -> dióxido de enxofre livre (mg/dm³)
+7. **total sulfur dioxide** -> dióxido de enxofre total (mg/dm³)
+8. **density** -> densidade (g/cm³)
 9. **pH**
-10. **sulphates** -> sulfatos (sulfato de potássio - g / dm3)
+10. **sulphates** -> sulfatos (sulfato de potássio - g/dm³)
 11. **alcohol** -> álcool (% por volume)
 12. **quality** -> qualidade (nota entre 0 e 10)
   
@@ -316,9 +316,12 @@ O relacionamento com qualidade mais forte encontrado foi a porcentagem de álcoo
 
 # Seção de Gráficos Multivariados
 
+## Importância Relativa Combinada de **sulphate** e **alcohol**
 ```{r echo=FALSE, Multivariate_Plots_Log10_Sulphate_Alcohol, fig.width=8.5}
 
+# Cria um gráfico com ggplot e jitter para demonstrar a relação entre alcohol e sulphates para a qualidade
 p1 <- ggplot(data=wQR, aes(x=quality.level, y=log10(sulphates), col=alcohol)) + geom_jitter()
+# Cria um scatter plot para melhor visualização da relação entre alcohol e sulphates para a qualidade
 p2 <- ggplot(data = wQR, aes(x = alcohol, y = log10(sulphates))) +
           geom_point(aes(color = quality.level), stat = 'summary', fun.y = median) +
           geom_smooth(method = "lm", se = TRUE, size = 1) +
@@ -327,8 +330,13 @@ p2 <- ggplot(data = wQR, aes(x = alcohol, y = log10(sulphates))) +
 grid.arrange(p1,p2)
 ```
 
+Com os gráficos acima podemos ver que vinhos com uma qualidade mais alta possuem um conjunto de valores mais altos de álcool e sulfatos.
+
+## Importância Relativa Combinada de **volatile.acidity** e **alcohol**
 ```{r echo=FALSE, Multivariate_Plots_Acidity_Alcohol, fig.width=8.5}
+# Cria um gráfico com ggplot e jitter para demonstrar a relação entre alcohol e volatile.acidity para a qualidade
 p3 <- ggplot(data=wQR, aes(x=quality.level, y=volatile.acidity, col=alcohol)) + geom_jitter()
+# Cria um scatter plot para melhor visualização da relação entre alcohol e volatile.acidity para a qualidade
 p4 <- ggplot(data = wQR, aes(x = alcohol, y = volatile.acidity)) +
           geom_point(aes(color = quality.level), stat = 'summary', fun.y = median) +
           geom_smooth(method = "lm", se = TRUE, size = 1) +
@@ -337,47 +345,162 @@ p4 <- ggplot(data = wQR, aes(x = alcohol, y = volatile.acidity)) +
 grid.arrange(p3,p4)
 ```
 
+Com os gráficos acima podemos ver que vinhos com uma qualidade mais alta possuem uma combinação de valores mais altos de álcool e valores pequenos de acidez volátil.
 
+## Importância Relativa Combinada de **volatile.acidity** e **sulphates**
+```{r echo=FALSE, Multivariate_Plots_Acidity_Sulphates, fig.width=8.5}
+# Cria um gráfico com ggplot e jitter para demonstrar a relação entre sulphates e volatile.acidity para a qualidade
+p5 <- ggplot(data=wQR, aes(x=quality.level, y=volatile.acidity, col=log(sulphates))) + geom_jitter()
+# Cria um scatter plot para melhor visualização da relação entre sulphates e volatile.acidity para a qualidade
+p6 <- ggplot(data = wQR, aes(x = log(sulphates), y = volatile.acidity)) +
+          geom_point(aes(color = quality.level), stat = 'summary', fun.y = median) +
+          geom_smooth(method = "lm", se = TRUE, size = 1) +
+          guides(colour = guide_legend(reverse=T))
+
+grid.arrange(p5,p6)
+```
+
+Com os gráficos acima podemos ver que vinhos com uma qualidade mais alta possuem uma combinação de valores mais altos de sulfatos e valores pequenos de acidez volátil. Podemos ver que ao aumentar os sulfatos, diminuímos a acidez volátil.
+
+## Importância Relativa de **volatile.acidity**, **sulphates** e **alcohol**
 ```{r echo=FALSE, Multivariate_Plots_PC_Influence}
+# Cria um gráfico para a visualização da influência das variáveis mais correlacionadas para a qualidade.
 ggplot(data=wQR, aes(x=quality.level, y=log10(sulphates),
                      col=alcohol, size=volatile.acidity)) + geom_jitter()
 ```
+
+Juntando todas as análises anteriores, temos um gráfico que comprova a teoria criada durante outras análises de que vinhos com maior qualidade são os que possuem:
+
+* Valores **mais altos** de Álcool;
+* Valores **mais altos** de Sulfatos; e
+* Valores **mais baixos** de Acidez Volátil.
 
 # Análise Multivariada
 
 ### Discuta sobre os relacionamentos observados nesta parte da investigação. Quais atributos que fortaleceram os demais na observação das variáveis de interesse?
 
-### Interações surpreendentes e/ou interessantes foram encontradas entre os atributos? 
+Analisando as variáveis mais correlacionadas a qualidade, chegamos a conclusão de que para obtermos vinhos de qualidade maior, os atributos que mais fortalecem são:
+
+* **Álcool** com valores **mais altos**;
+* **Sulfatos** com valores **mais altos**; e
+* **Acidez Volátil** com valores **mais baixos**.
+
+
+### Interações surpreendentes e/ou interessantes foram encontradas entre os atributos?
+
+Foi possível perceber que ao aumentar a quantidade de sulfatos no vinho a acidez volátil diminuiu e, como consequência, a qualidade do vinho aumenta.
 
 ------
 
 # Gráficos Finais e Sumário
 
 ### Primeiro Gráfico
-```{r echo=FALSE, Plot_One}
+```{r echo=FALSE, fig.height=6, fig.width=10, Plot_One}
+# Cria um histograma com a distribuição de notas para a qualidade do vinho
+pf1 <- ggplot(aes(x = quality), data = wQR) +
+       stat_count(colour="black", fill="#993366", width=.35) +
+       xlab("Nota de qualidade do vinho") + ylab("Número de avaliações") +
+       ggtitle("Número de Avaliações por Nota de Qualidade do Vinho")
 
+# Cria um histograma com a distribuição de níveis para a qualidade do vinho
+pf2 <- ggplot(aes(x = quality.level), data = wQR)+
+       stat_count(colour="black", fill="#993366", width=0.5)+
+       xlab("Nível de qualidade do vinho") + ylab("Número de avaliações") +
+       ggtitle("Número de Avaliações por Nível de Qualidade do Vinho")
+
+grid.arrange(pf1, pf2, top = "Avaliação da Qualidade dos Vinhos Tintos da Vinho Verde")
 ```
 
 ### Descrição do Primeiro Gráfico
 
+Para cada entrada no conjunto de dados ao menos 3 especialistas em vinhos avaliaram cada vinho, fornecendo uma nota entre 0 (muito ruim) e 10 (muito excelente).
+
+A distribuição das notas de qualidade do vinho estão extremamente concentradas nos valores 5 e 6, categorizadas como nível médio de qualidade. Além disso, não existem vinhos que foram avaliados com notas entre de 0 a 2 e nem de 9 a 10.
+
+Para facilitar a análise e visualização as notas foram agrupadas da seguinte forma:
+
+| Nível de qualidade | Notas |
+| :----------------: |:-----:|
+| Baixa              | 3, 4  |
+| Média              | 5, 6  |
+| Alta               | 7, 8  |
 
 ### Segundo Gráfico
-```{r echo=FALSE, Plot_Two}
+```{r echo=FALSE, fig.height=6, fig.width=10, Plot_Two}
+# Pega apenas os atributos iniciais
+data = wQR[, c(1:12)]
 
+# Cria a matriz de correlação
+cormat <- round(cor(data),2)
+# Reordena a matriz de correlação
+cormat <- reorder_cormat(cormat)
+# Pega o triângulo superior da matriz de correlação
+upper_tri <- get_upper_tri(cormat)
+# "funde" a matriz de correlação
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Cria um heatmap com a matriz fundida
+ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Correlação\nde Pearson") +
+  theme_minimal() +
+  ggtitle("Correlação de Pearson entre as Variáveis do Conjunto de Dados") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(hjust = 1)) +
+  coord_fixed()
+  
+
+# Adiciona os valores no heatmap
+ggheatmap + 
+geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
+theme(
+  axis.title.x = element_blank(),
+  axis.title.y = element_blank(),
+  panel.grid.major = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.ticks = element_blank(),
+  legend.justification = c(1, 0),
+  legend.position = c(0.5, 0.7),
+  legend.direction = "horizontal") +
+  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+         title.position = "top", title.hjust = 0.5))
 ```
 
 ### Descrição do Segundo Gráfico
+A correlação de Pearson nos permite algumas inferências:
 
+* A qualidade do vinho está negativamente correlacionada com a variável *volatile.acidity* em um valor considerável (-0.39). O que nos leva a inferir que quando a mesma cresce, a qualidade do vinho tende a descer.
+* A qualidade do vinho está positivamente correlacionada com a variável *alcohol* em um valor considerável (0.48). O que nos leva a inferir que quando a porcentagem de álcool aumenta, a qualidade do vinho tende a crescer.
+* A qualidade do vinho está positivamente correlacionada com as variáveis *sulphates* e *citric.acid* com 0.25 e 0.23 respectivamente. Essas duas variáveis nos fazem inferir que quantidades maiores da mesma tendem a levar a qualidade do vinho a valores maiores, mesmo que com uma importância menor do que *alcohol* e *volatile.acidity*.
 
 ### Terceiro Gráfico
-```{r echo=FALSE, Plot_Three}
-
+```{r echo=FALSE, fig.height=6, fig.width=10, Plot_Three}
+# Cria um gráfico para a visualização da influência das variáveis mais correlacionadas para a qualidade.
+ggplot(data=wQR, aes(x=quality.level, y=log10(sulphates),
+                     col=alcohol, size=volatile.acidity)) + 
+       geom_jitter() + xlab("Nível de qualidade do vinho") + ylab("Log10(Sulfato) (g/dm³)") +
+       labs(col="Álcool (%)", size="Acidez Volátil (g/dm³)") +
+       ggtitle("Influência de Propriedades Químicas na Qualidade do Vinho")
 ```
 
 ### Descrição do Terceiro Gráfico
+
+Analisando as variáveis mais correlacionadas a qualidade, conclui-se vinhos de qualidade maior possuem as seguintes propriedades:
+
+* **Álcool** com valores **mais altos**;
+* **Sulfatos** com valores **mais altos**; e
+* **Acidez Volátil** com valores **mais baixos**.
 
 ------
 
 # Reflexão
 
+# Referências
 
+[1] http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization
+
+[2] https://web.stanford.edu/class/bios221/labs/multivariate/lab_5_multivariate.html
