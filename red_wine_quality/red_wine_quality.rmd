@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 Red Wine Quality por Juliano Mendieta
 ========================================================
 
@@ -498,6 +503,30 @@ Analisando as variáveis mais correlacionadas a qualidade, conclui-se vinhos de 
 ------
 
 # Reflexão
+
+Este conjunto de dados contém 1.599 vinhos tintos com 11 variáveis de propriedades químicas do vinho. Ao menos 3 especialistas em vinhos avaliaram cada vinho, fornecendo uma nota entre 0 (muito ruim) e 10 (muito excelente).
+Nosso objetivo neste projeto é identificar a correlação entre as variáveis e a qualidade do vinho.
+
+Minha maior dificuldade foi me familiarizar com como as coisas acontecem no R, principalmente nesse formato de RMarkdown. Estou acostumado a usar Python e Jupyter e no próprio RStudio tive que dar uma relembrada.
+Além disso, nas análises foi dificil encontrar alguma variável que fosse a principal, como acontece no famoso
+exemplo de análise de diamantes. Por último, o desbalanceamento da variável alvo (quality) pode ter empobrecido
+a análise, uma vez que seria interessante ter amostras mais balanceadas para obter melhores resultados.
+
+As análises começaram a ficar mais promissoras quando visualizações da correlação entre os dados foram sendo
+geradas, uma vez que foi possível não só identificar a correlação entre as váriaveis e a qualidade do vinho mas
+também qual é a correlação entre as próprias variáveis. As variáveis com maior correlação com a qualidade do vinho foram:
+
+| Variável | Correlação com Qualidade |
+| :----------------: |:-----:|
+| *volatile.acidity* | -0.39 |
+| *alcohol*          | 0.48  |
+| *sulphates*        | 0.25  |
+| *citric.acid*      | 0.23  |
+
+Essa análise poderia ser enriquecida através do fornecimento de mais dados com avaliações que tornassem mais
+balanceado a variável de qualidade. Além disso, outras variáveis poderiam ser adicionadas para refinar a mesma,
+como por exemplo o tipo da uva utilizado no processo de criação do vinho. Uma possível abordagem também é aplicar
+técnicas de aprendizado de máquina não-supervisionado como K-means para obter novos insights e até quem sabe criar um modelo de predição para avaliar a qualidade de novos vinhos.
 
 # Referências
 
