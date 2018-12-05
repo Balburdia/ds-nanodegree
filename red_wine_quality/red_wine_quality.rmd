@@ -321,7 +321,7 @@ O relacionamento com qualidade mais forte encontrado foi a porcentagem de álcoo
 
 # Seção de Gráficos Multivariados
 
-## Importância Relativa Combinada de **sulphate** e **alcohol**
+## Importância Relativa Combinada de **sulphates** e **alcohol**
 ```{r echo=FALSE, Multivariate_Plots_Log10_Sulphate_Alcohol, fig.width=8.5}
 
 # Cria um gráfico com ggplot e jitter para demonstrar a relação entre alcohol e sulphates para a qualidade
