@@ -31,7 +31,7 @@ Red Wine Quality é um dataset relacionado a variates do vinho Português "Vinho
 1. **fixed acidity** -> acidez fixa (ácido tartárico - g/dm³)
 2. **volatile acidity** -> acidez volátil (ácido acético - g/dm³)
 3. **citric acid** -> acido cítrico (g/dm³)
-4. **açucar residual** -> residual sugar (g/dm³)
+4. **residual sugar** -> açucar residual (g/dm³)
 5. **chlorides** -> cloretos (cloreto de sódio - g/dm³)
 6. **free sulfur dioxide** -> dióxido de enxofre livre (mg/dm³)
 7. **total sulfur dioxide** -> dióxido de enxofre total (mg/dm³)
