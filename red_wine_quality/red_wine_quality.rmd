@@ -55,7 +55,7 @@ summary(wQR)
 
 Alguns pontos interessantes até agora:
 
-* Valores de qualidade não possuem entradas entre de 0 a 3 e de 9 a 10!
+* Valores de qualidade não possuem entradas entre de 0 a 2 e de 9 a 10!
 * Temos uma média e mediana relativamente distantes em *total.sulfur.dioxide*!
 
 # Seção de Gráficos Univariados
@@ -135,7 +135,7 @@ ggplot(aes(x = quality), data = wQR) +
   ggtitle("Distribuição da Qualidade do Vinho")
 ```
 
-Conforme vimos anteriormente, não existem valores de 0 a 3 e de 8 a 10. 
+Conforme vimos anteriormente, não existem valores de 0 a 2 e de 9 a 10. 
 Com esse gráfico podemos ver uma grande concentração dos dados para vinhos com notas 5 e 6.
 Podemos dividir as notas de qualidade em 3 níveis para auxiliar em próximas visualizações: baixa (3-4), média (5-6) e alta (7-8).
 
